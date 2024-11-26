@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+</head>
+<body>
+<h1>Task Manager</h1>
+
+<!-- Task List -->
+<h2>All Tasks</h2>
+<ul>
+    <li th:each="task : ${tasks}">
+        <strong th:text="${task.title}"></strong>:
+        <span th:text="${task.description}"></span>
+        <span th:text="${task.completed ? '✔️' : '❌'}"></span>
+
+        <!-- Edit Button -->
+        <form th:action="@{'/tasks/edit/' + ${task.id}}" method="get" style="display:inline;">
+            <button type="submit">Edit</button>
+        </form>
+
+        <!-- Toggle Completed Button -->
+        <form th:action="@{'/tasks/toggle-completed/' + ${task.id}}" method="post" style="display:inline;">
+            <button type="submit" th:text="${task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}"></button>
+        </form>
+
+        <!-- Delete Button -->
+        <form th:action="@{'/tasks/delete/' + ${task.id}}" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+
+<!-- Form to Add a New Task -->
+<h2>Add New Task</h2>
+<form th:action="@{/tasks/create}" method="post">
+    <label>Title: <input type="text" name="title"></label><br>
+    <label>Description: <input type="text" name="description"></label><br>
+    <button type="submit">Add Task</button>
+</form>
+</body>
+</html>

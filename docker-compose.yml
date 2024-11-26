@@ -1,25 +1,36 @@
-version: '3.8'
 services:
-  task-manager-server:
+  app:
     build:
       context: .
-      dockerfile: Dockerfile.server
+      dockerfile: Dockerfile-springboot
     ports:
       - "8080:8080"
-    container_name: task-manager-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/taskmanager
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+      - seeder
 
-  task-manager-console:
+  db:
+    image: postgres:15
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskmanager
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  seeder:
     build:
       context: .
-      dockerfile: Dockerfile.console
-    stdin_open: true
-    tty: true
-    container_name: task-manager-console
+      dockerfile: Dockerfile-seeder
     depends_on:
-      - task-manager-server
+      - db
 
-networks:
-  default:
-    driver: bridge
-
-
+volumes:
+  db-data:
